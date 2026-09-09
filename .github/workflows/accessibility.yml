@@ -32,7 +32,7 @@ jobs:
 
       # No tagged release exists yet, so `@main` is the only ref that resolves — and it moves.
       # Pin the full commit SHA instead if your CI must not change under you.
-      - uses: DanBeckDev/a11y-witness@main
+      - uses: DanBeckDev/a11y-witness@agent/setup-node-lockfile-debug-568
         id: witness
         with:
           url: https://www.w3.org/WAI/
