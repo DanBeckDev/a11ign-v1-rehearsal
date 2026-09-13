@@ -1,0 +1,32 @@
+# Written by following README.md "Quickstart" (lines 168-180) and
+# docs/try-it.md "The fastest route: a GitHub Actions run" (lines 40-52).
+#
+# `name:` and `on:` are MINE, not the documents' -- no snippet in README.md,
+# docs/try-it.md or docs/github-action.md shows a complete workflow file, so a
+# reader has to supply the trigger from their own knowledge of GitHub Actions.
+name: a11ign
+on:
+  workflow_dispatch:
+
+jobs:
+  a11y:
+    runs-on: windows-2022          # NVDA needs Windows; GitHub hosts these
+    permissions:
+      pull-requests: write         # for the PR comment below; omit it and the report still runs, only quieter
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DanBeckDev/a11y-witness@main
+        id: a11ign                 # MINE: needed to reference the outputs below; no doc snippet shows an id
+        with:
+          url: https://en.wikipedia.org/wiki/Web_accessibility
+          task: Learn about web accessibility
+
+      # docs/github-action.md:288 -- "result-json | Path to the full result,
+      # including the transcript. Worth uploading as an artifact -- the
+      # transcript is the evidence behind every finding."
+      # No copy-paste snippet in the three documents includes this step.
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a11ign-result
+          path: ${{ steps.a11ign.outputs.result-json }}
