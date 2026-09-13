@@ -30,3 +30,13 @@ jobs:
         with:
           name: a11ign-result
           path: ${{ steps.a11ign.outputs.result-json }}
+
+      # MINE, not the documents'. The job summary is the only place a non-PR run
+      # shows its report, and GitHub does not expose job summaries over the REST
+      # API -- so with no browser there is no way to read the output the
+      # documents promise. The path comes from the action's own run log
+      # (`--summary-out="$RUNNER_TEMP/a11ign-summary.md"`), not from the docs.
+      - name: Show the job summary in the log
+        if: always()
+        shell: bash
+        run: cat "$RUNNER_TEMP/a11ign-summary.md" || echo "no summary file"
