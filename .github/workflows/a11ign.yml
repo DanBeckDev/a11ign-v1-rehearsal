@@ -12,7 +12,7 @@ jobs:
       pull-requests: write       # for the PR comment below; omit it and the report still runs, only quieter
     steps:
       - uses: actions/checkout@v4
-      - uses: DanBeckDev/a11y-witness@3bb1fddf
+      - uses: DanBeckDev/a11y-witness@3bb1fddf88f231cc4ee485c32e12160b2852952b
         # Pin it: @main moves under you. Use the full commit SHA if your CI must not change.
         id: a11ign
         with:
