@@ -12,33 +12,12 @@ jobs:
       pull-requests: write       # for the PR comment below; omit it and the report still runs, only quieter
     steps:
       - uses: actions/checkout@v4
-      - uses: DanBeckDev/a11y-witness@3bb1fddf88f231cc4ee485c32e12160b2852952b
+      - uses: DanBeckDev/a11y-witness@18b6b2050609c2a97c3b1567b3658cb7ac86304c
         # Pin it: @main moves under you. Use the full commit SHA if your CI must not change.
         id: a11ign
         with:
           url: https://www.w3.org/WAI
           task: Learn about web accessibility
-      # ---- NOT FROM THE DOCUMENTATION. My own step, added for the second run only. ----
-      # docs/try-it.md:73 and docs/github-action.md:94 both promise that on a hand-started run
-      # "the report is in the run's job summary". After run 1 I could not read it: the jobs API has
-      # no summary field, and the check-run's output.summary and output.text are both null. With no
-      # browser this prints it into the log instead. The path is the one the action's own Report step
-      # passes as --summary-out, read out of run 1's log.
-      - name: NOT FROM THE DOCS - print the job summary into the log
-        if: always()
-        shell: bash
-        run: |
-          echo "===== BEGIN a11ign-summary.md (the --summary-out file) ====="
-          cat "$RUNNER_TEMP/a11ign-summary.md" 2>/dev/null || echo "(no file at RUNNER_TEMP/a11ign-summary.md)"
-          echo "===== END a11ign-summary.md ====="
-          echo "===== runner step-summary files (did anything reach GITHUB_STEP_SUMMARY?) ====="
-          ls -l "$RUNNER_TEMP/_runner_file_commands/" 2>/dev/null || echo "(no _runner_file_commands dir)"
-          shopt -s nullglob
-          for f in "$RUNNER_TEMP"/_runner_file_commands/step_summary_*; do
-            echo "--- $f ($(wc -c < "$f") bytes) ---"
-            cat "$f"
-          done
-          true
       # Keep the evidence: the full result, including the transcript behind every finding. Guarded on the
       # output existing, so a run that failed does not also fail the upload.
       - uses: actions/upload-artifact@v4
