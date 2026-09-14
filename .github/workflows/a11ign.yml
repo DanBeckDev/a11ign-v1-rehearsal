@@ -26,3 +26,26 @@ jobs:
           name: a11ign-result
           path: ${{ steps.a11ign.outputs.result-json }}
           if-no-files-found: warn
+      # ---- NOT FROM THE DOCUMENTATION. My own step, run 2 only. ----
+      # docs/try-it.md:73 and docs/github-action.md:94 both say that on a hand-started run "the report
+      # is in the run's job summary". After run 1 I could not read it: gh has no job-summary command,
+      # the jobs API has no summary field, and the check-run's output.summary and output.text are both
+      # null. I have no browser. This prints the report into the log instead. The path is the one the
+      # action's own Report step passes as --summary-out, read out of run 1's log.
+      - name: NOT FROM THE DOCS - print the job summary into the log
+        if: always()
+        shell: bash
+        run: |
+          echo "===== BEGIN a11ign-summary.md (the --summary-out file) ====="
+          cat "$RUNNER_TEMP/a11ign-summary.md" 2>/dev/null || echo "(no file at RUNNER_TEMP/a11ign-summary.md)"
+          echo "===== END a11ign-summary.md ====="
+          echo "===== anything written to GITHUB_STEP_SUMMARY? ====="
+          shopt -s nullglob
+          found=0
+          for f in "$RUNNER_TEMP"/_runner_file_commands/step_summary_*; do
+            found=1
+            echo "--- $f ($(wc -c < "$f") bytes) ---"
+            cat "$f"
+          done
+          [ "$found" = 1 ] || echo "(no step_summary_* file under RUNNER_TEMP/_runner_file_commands)"
+          true
